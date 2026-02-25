@@ -29,9 +29,19 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
   const fetchQuestions = async (): Promise<void> => {
     setLoading(true);
     try {
-      dispatch({ type: "setItems", data: [] });
+      const res = await fetch("http://localhost:5501/api/questions");
+      const json = await res.json();
+
+      if (!res.ok) {
+        console.error("Failed to fetch questions:", json?.error);
+        dispatch({ type: "setItems", data: [] });
+        return;
+      }
+
+      dispatch({ type: "setItems", data: json?.data || [] });
     } catch (err) {
       console.error("Failed to fetch questions:", err);
+      dispatch({ type: "setItems", data: [] });
     } finally {
       setLoading(false);
     }
@@ -51,16 +61,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         return { error: data?.error || "Failed to get answer." };
       }
 
-      dispatch({
-        type: "addItem",
-        data: {
-          id: crypto.randomUUID(),
-          question,
-          answer: data.data.answer,
-          createdAt: new Date().toISOString(),
-        },
-      });
-
+      await fetchQuestions();
       return {};
     } catch (error) {
       console.error("Error asking question:", error);
