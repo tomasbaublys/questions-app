@@ -1,6 +1,8 @@
+// client/src/contexts/QuestionsContext.tsx
 import { createContext, useEffect, useReducer, useState } from "react";
 import type {
   QaItem,
+  AskQuestionResult,
   ChildrenElementProp,
   QuestionsContextReducerActions,
   QuestionsContextType,
@@ -24,18 +26,45 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
   const [items, dispatch] = useReducer(reducer, []);
   const [loading, setLoading] = useState(true);
 
-  const setItems = (data: QaItem[]) => dispatch({ type: "setItems", data });
-  const addItem = (item: QaItem) => dispatch({ type: "addItem", data: item });
-
   const fetchQuestions = async (): Promise<void> => {
     setLoading(true);
-
     try {
       dispatch({ type: "setItems", data: [] });
     } catch (err) {
       console.error("Failed to fetch questions:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const askQuestion = async (question: string): Promise<AskQuestionResult> => {
+    try {
+      const res = await fetch("http://localhost:5501/api/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data?.data?.answer) {
+        return { error: data?.error || "Failed to get answer." };
+      }
+
+      dispatch({
+        type: "addItem",
+        data: {
+          id: crypto.randomUUID(),
+          question,
+          answer: data.data.answer,
+          createdAt: new Date().toISOString(),
+        },
+      });
+
+      return {};
+    } catch (error) {
+      console.error("Error asking question:", error);
+      return { error: "Something went wrong. Please try again." };
     }
   };
 
@@ -49,8 +78,8 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         items,
         loading,
         fetchQuestions,
-        addItem,
-        setItems,
+        askQuestion,
+        dispatch,
       }}
     >
       {children}

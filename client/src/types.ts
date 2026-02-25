@@ -9,12 +9,16 @@ export type QuestionsContextReducerActions =
   | { type: "setItems"; data: QaItem[] }
   | { type: "addItem"; data: QaItem };
 
+export type AskQuestionResult = {
+  error?: string;
+};
+
 export type QuestionsContextType = {
   items: QaItem[];
   loading: boolean;
   fetchQuestions: () => Promise<void>;
-  addItem: (item: QaItem) => void;
-  setItems: (items: QaItem[]) => void;
+  askQuestion: (question: string) => Promise<AskQuestionResult>;
+  dispatch: React.Dispatch<QuestionsContextReducerActions>;
 };
 
 export type ChildrenElementProp = {
