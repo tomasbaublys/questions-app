@@ -1,35 +1,63 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import QuestionsContext from "../../contexts/QuestionsContext";
 import type { QuestionsContextType } from "../../types";
 
 const Page = styled.div`
   min-height: 100vh;
-  background: #f3f4f7;
+  background: var(--bg);
   display: flex;
   justify-content: center;
   padding: 16px 12px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  color: #2b2f36;
+  color: var(--text);
 `;
 
 const Card = styled.div`
   width: 100%;
   max-width: 480px;
-  background: #ffffff;
+  background: var(--card);
   border-radius: 14px;
   padding: 18px 16px 14px;
-  box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
+  box-shadow: var(--shadow);
+`;
+
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 14px;
 `;
 
 const Title = styled.h1`
-  margin: 0 0 14px;
+  margin: 0;
   font-size: 28px;
   line-height: 1.05;
   font-weight: 800;
-  color: #3f4b63;
+  color: var(--title);
+`;
+
+const ThemeToggle = styled.button`
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const SearchRow = styled.form`
@@ -41,12 +69,12 @@ const SearchInput = styled.input`
   width: 100%;
   height: 40px;
   border-radius: 999px;
-  border: 1px solid #eef0f4;
-  background: #f6f3ee;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
   padding: 0 44px 0 14px;
   font-size: 12.5px;
   outline: none;
-  color: #3f4b63;
+  color: var(--title);
 
   &::placeholder {
     color: #9aa2af;
@@ -75,7 +103,7 @@ const SearchIconWrap = styled.button`
 `;
 
 const Hero = styled.div`
-  border: 1px solid #eef0f4;
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px 12px;
   margin-bottom: 16px;
@@ -83,7 +111,7 @@ const Hero = styled.div`
 
 const HeroLabel = styled.div`
   font-size: 12px;
-  color: #98a2b3;
+  color: var(--muted);
   margin-bottom: 8px;
 `;
 
@@ -92,12 +120,12 @@ const HistoryTitle = styled.h2`
   font-size: 18px;
   line-height: 1.2;
   font-weight: 700;
-  color: #3f4b63;
+  color: var(--title);
 `;
 
 const Item = styled.div`
   padding: 12px 2px;
-  border-bottom: 1px solid #eef0f4;
+  border-bottom: 1px solid var(--border);
 `;
 
 const ItemNoBorder = styled(Item)`
@@ -113,13 +141,13 @@ const ItemTop = styled.div`
 
 const QuestionTitle = styled.div`
   font-weight: 400;
-  color: #3f4b63;
+  color: var(--title);
   font-size: 12.5px;
   line-height: 1.55;
 `;
 
 const QuestionTitleMuted = styled(QuestionTitle)`
-  color: #667085;
+  color: var(--muted);
   font-size: 12px;
   opacity: 0.8;
 `;
@@ -138,8 +166,8 @@ const ToggleButton = styled.button`
 const AnswerBox = styled.div`
   margin-top: 10px;
   margin-left: 16px;
-  background: #f6f3ee;
-  border: 1px solid #eef0f4;
+  background: var(--answer-bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px 10px;
 `;
@@ -150,7 +178,7 @@ const AnswerBoxHero = styled(AnswerBox)`
 
 const AnswerText = styled.p`
   margin: 0;
-  color: #6f7785;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
   font-weight: 400;
@@ -164,6 +192,11 @@ const Questions = () => {
   const { items, loading, askQuestion } = useContext(QuestionsContext) as QuestionsContextType;
   const [question, setQuestion] = useState("");
   const [openId, setOpenId] = useState<string>("");
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = isDark ? "dark" : "";
+  }, [isDark]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,13 +208,23 @@ const Questions = () => {
   return (
     <Page>
       <Card>
-        <Title>Ask Your Question</Title>
+        <HeaderRow>
+          <Title>Ask Your Question</Title>
+          <ThemeToggle
+            type="button"
+            aria-label="Toggle theme"
+            onClick={() => setIsDark((v) => !v)}
+          >
+            {isDark ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
+          </ThemeToggle>
+        </HeaderRow>
 
         <SearchRow onSubmit={onSubmit}>
           <SearchInput
             placeholder="Ask question here"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
+            name="question"
           />
           <SearchIconWrap type="submit" aria-label="Submit question" disabled={!question.trim()}>
             <SearchIcon fontSize="small" />

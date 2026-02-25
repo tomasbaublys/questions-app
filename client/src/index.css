@@ -5,3 +5,27 @@
 body {
   margin: 0;
 }
+
+:root {
+  --bg: #f3f4f7;
+  --card: #ffffff;
+  --text: #2b2f36;
+  --title: #3f4b63;
+  --muted: #667085;
+  --border: #eef0f4;
+  --input-bg: #f6f3ee;
+  --answer-bg: #f6f3ee;
+  --shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0b0f17;
+  --card: #101828;
+  --text: #e6e7ea;
+  --title: #e6e7ea;
+  --muted: #98a2b3;
+  --border: #1f2937;
+  --input-bg: #0f172a;
+  --answer-bg: #0f172a;
+  --shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+}
