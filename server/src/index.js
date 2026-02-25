@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import { initDb, pool } from "./db/db.js";
+import { initDb, pool, dbReady } from "./db/db.js";
 
 const PORT = process.env.PORT || 5501;
 
@@ -17,6 +17,10 @@ app.use(cors(corsOptions));
 await initDb();
 
 app.get("/api/questions", async (_req, res) => {
+  if (!pool || !dbReady) {
+    return res.status(200).send({ data: [] });
+  }
+
   try {
     const result = await pool.query(
       'SELECT id, question, answer, created_at AS "createdAt" FROM questions ORDER BY created_at DESC'
@@ -37,6 +41,11 @@ app.post("/api/answer", async (req, res) => {
 
   const q = question.trim();
   const answer = `You asked: ${q}`;
+
+  if (!pool || !dbReady) {
+    return res.status(200).send({ data: { answer } });
+  }
+
   const id = crypto.randomUUID();
 
   try {

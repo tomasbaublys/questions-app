@@ -61,7 +61,23 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         return { error: data?.error || "Failed to get answer." };
       }
 
-      await fetchQuestions();
+      const idFromServer = data?.data?.id;
+
+      if (idFromServer) {
+        await fetchQuestions();
+        return {};
+      }
+
+      dispatch({
+        type: "addItem",
+        data: {
+          id: crypto.randomUUID(),
+          question,
+          answer: data.data.answer,
+          createdAt: new Date().toISOString(),
+        },
+      });
+
       return {};
     } catch (error) {
       console.error("Error asking question:", error);
