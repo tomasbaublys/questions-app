@@ -1,6 +1,10 @@
+// client/src/components/pages/Questions.tsx
+import { useContext } from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import QuestionsContext from "../../contexts/QuestionsContext";
+import type { QuestionsContextType } from "../../types";
 
 const Page = styled.div`
   min-height: 100vh;
@@ -111,6 +115,8 @@ const AnswerText = styled.p`
 `;
 
 const Questions = () => {
+  const { items, loading } = useContext(QuestionsContext) as QuestionsContextType;
+
   return (
     <Page>
       <Card>
@@ -123,27 +129,40 @@ const Questions = () => {
           </SearchIconWrap>
         </SearchRow>
 
-        <Item>
-          <ItemTop>
-            <QuestionTitle>Question</QuestionTitle>
-            <ToggleButton type="button" aria-label="Expand">
-              <ExpandMoreIcon />
-            </ToggleButton>
-          </ItemTop>
+        {loading ? (
+          <Item>
+            <ItemTop>
+              <QuestionTitle>Loading...</QuestionTitle>
+              <ToggleButton type="button" aria-label="Expand">
+                <ExpandMoreIcon />
+              </ToggleButton>
+            </ItemTop>
+          </Item>
+        ) : items.length === 0 ? (
+          <Item>
+            <ItemTop>
+              <QuestionTitle>No questions yet</QuestionTitle>
+              <ToggleButton type="button" aria-label="Expand">
+                <ExpandMoreIcon />
+              </ToggleButton>
+            </ItemTop>
+          </Item>
+        ) : (
+          items.map((it) => (
+            <Item key={it.id}>
+              <ItemTop>
+                <QuestionTitle>{it.question}</QuestionTitle>
+                <ToggleButton type="button" aria-label="Expand">
+                  <ExpandMoreIcon />
+                </ToggleButton>
+              </ItemTop>
 
-          <AnswerBox>
-            <AnswerText>Answer</AnswerText>
-          </AnswerBox>
-        </Item>
-
-        <Item>
-          <ItemTop>
-            <QuestionTitle>Question</QuestionTitle>
-            <ToggleButton type="button" aria-label="Expand">
-              <ExpandMoreIcon />
-            </ToggleButton>
-          </ItemTop>
-        </Item>
+              <AnswerBox>
+                <AnswerText>{it.answer}</AnswerText>
+              </AnswerBox>
+            </Item>
+          ))
+        )}
       </Card>
     </Page>
   );
