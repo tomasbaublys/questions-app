@@ -1,4 +1,3 @@
-// client/src/components/pages/Questions.tsx
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
@@ -31,10 +30,6 @@ const Title = styled.h1`
   line-height: 1.05;
   font-weight: 800;
   color: #3f4b63;
-
-  @media (max-width: 420px) {
-    font-size: 24px;
-  }
 `;
 
 const SearchRow = styled.form`
@@ -79,9 +74,34 @@ const SearchIconWrap = styled.button`
   }
 `;
 
+const Hero = styled.div`
+  border: 1px solid #eef0f4;
+  border-radius: 14px;
+  padding: 14px 12px;
+  margin-bottom: 16px;
+`;
+
+const HeroLabel = styled.div`
+  font-size: 12px;
+  color: #98a2b3;
+  margin-bottom: 8px;
+`;
+
+const HistoryTitle = styled.h2`
+  margin: 10px 0 8px;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #3f4b63;
+`;
+
 const Item = styled.div`
   padding: 12px 2px;
   border-bottom: 1px solid #eef0f4;
+`;
+
+const ItemNoBorder = styled(Item)`
+  border-bottom: 0;
 `;
 
 const ItemTop = styled.div`
@@ -95,9 +115,16 @@ const QuestionTitle = styled.div`
   font-weight: 400;
   color: #3f4b63;
   font-size: 12.5px;
+  line-height: 1.55;
 `;
 
-const ToggleButton = styled.button<{ open?: boolean }>`
+const QuestionTitleMuted = styled(QuestionTitle)`
+  color: #667085;
+  font-size: 12px;
+  opacity: 0.8;
+`;
+
+const ToggleButton = styled.button`
   border: 0;
   background: transparent;
   color: #a1a8b4;
@@ -106,27 +133,31 @@ const ToggleButton = styled.button<{ open?: boolean }>`
   padding: 6px 8px;
   display: grid;
   place-items: center;
-
-  svg {
-    transition: transform 0.15s ease;
-    transform: rotate(${(p) => (p.open ? "180deg" : "0deg")});
-  }
 `;
 
 const AnswerBox = styled.div`
   margin-top: 10px;
+  margin-left: 16px;
   background: #f6f3ee;
   border: 1px solid #eef0f4;
   border-radius: 12px;
   padding: 10px 10px;
 `;
 
+const AnswerBoxHero = styled(AnswerBox)`
+  padding: 12px 12px;
+`;
+
 const AnswerText = styled.p`
   margin: 0;
   color: #6f7785;
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
   font-weight: 400;
+`;
+
+const AnswerTextHero = styled(AnswerText)`
+  font-size: 12.5px;
 `;
 
 const Questions = () => {
@@ -158,42 +189,64 @@ const Questions = () => {
         </SearchRow>
 
         {loading ? (
-          <Item>
+          <ItemNoBorder>
             <ItemTop>
               <QuestionTitle>Loading...</QuestionTitle>
             </ItemTop>
-          </Item>
+          </ItemNoBorder>
         ) : items.length === 0 ? (
-          <Item>
+          <ItemNoBorder>
             <ItemTop>
               <QuestionTitle>No questions yet</QuestionTitle>
             </ItemTop>
-          </Item>
+          </ItemNoBorder>
         ) : (
-          items.map((it, index) => (
-            <Item key={it.id}>
-              <ItemTop>
-                <QuestionTitle>{it.question}</QuestionTitle>
+          <>
+            <Hero>
+              <HeroLabel>Current</HeroLabel>
 
-                {index > 0 ? (
-                  <ToggleButton
-                    type="button"
-                    aria-label="Expand"
-                    open={openId === it.id}
-                    onClick={() => setOpenId((prev) => (prev === it.id ? "" : it.id))}
-                  >
-                    <ExpandMoreIcon />
-                  </ToggleButton>
-                ) : null}
-              </ItemTop>
+              <ItemNoBorder>
+                <ItemTop>
+                  <QuestionTitle>{items[0].question}</QuestionTitle>
+                </ItemTop>
 
-              {index === 0 || openId === it.id ? (
-                <AnswerBox>
-                  <AnswerText>{it.answer}</AnswerText>
-                </AnswerBox>
-              ) : null}
-            </Item>
-          ))
+                <AnswerBoxHero>
+                  <AnswerTextHero>{items[0].answer}</AnswerTextHero>
+                </AnswerBoxHero>
+              </ItemNoBorder>
+            </Hero>
+
+            {items.length > 1 ? <HistoryTitle>Last Questions</HistoryTitle> : null}
+
+            {items.slice(1).map((it, idx) => {
+              const isOpen = openId === it.id;
+              const isLast = idx === items.slice(1).length - 1;
+
+              const Wrapper = isLast ? ItemNoBorder : Item;
+
+              return (
+                <Wrapper key={it.id}>
+                  <ItemTop>
+                    <QuestionTitleMuted>{it.question}</QuestionTitleMuted>
+
+                    <ToggleButton
+                      type="button"
+                      aria-label="Expand"
+                      onClick={() => setOpenId((prev) => (prev === it.id ? "" : it.id))}
+                    >
+                      <ExpandMoreIcon style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
+                    </ToggleButton>
+                  </ItemTop>
+
+                  {isOpen ? (
+                    <AnswerBox>
+                      <AnswerText>{it.answer}</AnswerText>
+                    </AnswerBox>
+                  ) : null}
+                </Wrapper>
+              );
+            })}
+          </>
         )}
       </Card>
     </Page>

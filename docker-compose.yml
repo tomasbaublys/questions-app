@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    container_name: questions_db
+    environment:
+      POSTGRES_DB: questions
+      POSTGRES_USER: questions_user
+      POSTGRES_PASSWORD: questions_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - questions_pgdata:/var/lib/postgresql/data
+
+volumes:
+  questions_pgdata:
