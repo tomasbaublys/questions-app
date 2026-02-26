@@ -12,17 +12,17 @@ const Page = styled.div`
   background: var(--bg);
   display: flex;
   justify-content: center;
-  padding: 16px 12px;
+  padding: 20px 16px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
 `;
 
 const Card = styled.div`
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
   background: var(--card);
   border-radius: 14px;
-  padding: 18px 16px 14px;
+  padding: 20px 30px;
   box-shadow: var(--shadow);
 `;
 
@@ -117,7 +117,7 @@ const HeroLabel = styled.div`
 
 const HistoryTitle = styled.h2`
   margin: 10px 0 8px;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 1.2;
   font-weight: 700;
   color: var(--title);
@@ -192,10 +192,12 @@ const Questions = () => {
   const { items, loading, askQuestion } = useContext(QuestionsContext) as QuestionsContextType;
   const [question, setQuestion] = useState("");
   const [openId, setOpenId] = useState<string>("");
-  const [isDark, setIsDark] = useState(false);
+
+  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
 
   useEffect(() => {
     document.documentElement.dataset.theme = isDark ? "dark" : "";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 
   const onSubmit = async (e: React.FormEvent) => {
