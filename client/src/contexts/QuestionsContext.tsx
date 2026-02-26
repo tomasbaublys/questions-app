@@ -1,4 +1,3 @@
-// client/src/contexts/QuestionsContext.tsx
 import { createContext, useEffect, useReducer, useState } from "react";
 import type {
   QaItem,
