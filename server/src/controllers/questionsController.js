@@ -19,12 +19,21 @@ const getQuestions = async (_req, res) => {
 const askQuestion = async (req, res) => {
   const { question } = req.body || {};
 
-  if (!question || typeof question !== "string" || !question.trim()) {
+  if (typeof question !== "string") {
     return res.status(400).send({ error: "Question is required." });
   }
 
-  const q = question.trim();
-  const answer = `You asked: ${q}`;
+  const text = question.trim();
+
+  if (!text) {
+    return res.status(400).send({ error: "Question is required." });
+  }
+
+  if (text.length > 500) {
+    return res.status(400).send({ error: "Question is too long." });
+  }
+
+  const answer = `You asked: ${text}`;
 
   if (!pool || !dbReady) {
     return res.status(200).send({ data: { answer } });
@@ -35,7 +44,7 @@ const askQuestion = async (req, res) => {
   try {
     await pool.query("INSERT INTO questions (id, question, answer) VALUES ($1, $2, $3)", [
       id,
-      q,
+      text,
       answer,
     ]);
 

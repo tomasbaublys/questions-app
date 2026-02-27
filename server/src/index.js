@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import "dotenv/config";
 import { initDb } from "./db/db.js";
 import questionsRoutes from "./routes/questionsRoutes.js";
@@ -12,6 +13,7 @@ const corsOptions = {
 
 const app = express();
 
+app.use(helmet());
 app.use(express.json());
 app.use(cors(corsOptions));
 

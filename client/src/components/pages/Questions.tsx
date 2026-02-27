@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import QuestionsContext from "../../contexts/QuestionsContext";
 import type { QuestionsContextType } from "../../types";
-import SearchBar from "../UI/molecules/SearchBar";
+import QuestionForm from "../UI/molecules/QuestionForm";
 import ThemeToggle from "../UI/molecules/ThemeToggle";
 import CurrentQuestion from "../UI/organisms/CurrentQuestion";
 import QuestionsHistory from "../UI/organisms/QuestionsHistory";
@@ -76,7 +76,7 @@ const Questions = () => {
           <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
         </HeaderRow>
 
-        <SearchBar value={question} onChange={setQuestion} onSubmit={onSubmit} />
+        <QuestionForm value={question} onChange={setQuestion} onSubmit={onSubmit} />
 
         {loading ? (
           <Message>Loading...</Message>

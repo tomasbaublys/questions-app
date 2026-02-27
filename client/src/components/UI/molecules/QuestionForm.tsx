@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 
-const SearchRow = styled.form`
+const Form = styled.form`
   position: relative;
   margin-bottom: 14px;
 `;
 
-const SearchInput = styled.input`
+const Input = styled.input`
   width: 100%;
   height: 40px;
   border-radius: 999px;
@@ -22,7 +22,7 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchIconWrap = styled.button`
+const SubmitButton = styled.button`
   position: absolute;
   right: 12px;
   top: 50%;
@@ -49,20 +49,21 @@ type Props = {
   onSubmit: (e: React.SyntheticEvent<HTMLFormElement>) => void;
 };
 
-const SearchBar = ({ value, onChange, onSubmit }: Props) => {
+const QuestionForm = ({ value, onChange, onSubmit }: Props) => {
   return (
-    <SearchRow onSubmit={onSubmit}>
-      <SearchInput
+    <Form onSubmit={onSubmit}>
+      <Input
         placeholder="Ask question here"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         name="question"
+        maxLength={500}
       />
-      <SearchIconWrap type="submit" aria-label="Submit question" disabled={!value.trim()}>
+      <SubmitButton type="submit" aria-label="Submit question" disabled={!value.trim()}>
         <SearchIcon fontSize="small" />
-      </SearchIconWrap>
-    </SearchRow>
+      </SubmitButton>
+    </Form>
   );
 };
 
-export default SearchBar;
+export default QuestionForm;
