@@ -3,7 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 
 const Form = styled.form`
   position: relative;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 `;
 
 const Input = styled.input`
@@ -16,6 +16,10 @@ const Input = styled.input`
   font-size: 12.5px;
   outline: none;
   color: var(--title);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &::placeholder {
     color: #9aa2af;
@@ -43,6 +47,18 @@ const SubmitButton = styled.button`
   }
 `;
 
+const HelperText = styled.div`
+  margin-left: 14px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--muted);
+`;
+
+const HelperTextError = styled(HelperText)`
+  color: #d92d20;
+`;
+
 type Props = {
   value: string;
   onChange: (next: string) => void;
@@ -50,19 +66,33 @@ type Props = {
 };
 
 const QuestionForm = ({ value, onChange, onSubmit }: Props) => {
+  const trimmedLen = value.trim().length;
+  const tooShort = trimmedLen > 0 && trimmedLen < 3;
+  const tooLong = value.length > 500;
+  const disabled = trimmedLen === 0 || tooShort || tooLong;
+
   return (
-    <Form onSubmit={onSubmit}>
-      <Input
-        placeholder="Ask question here"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        name="question"
-        maxLength={500}
-      />
-      <SubmitButton type="submit" aria-label="Submit question" disabled={!value.trim()}>
-        <SearchIcon fontSize="small" />
-      </SubmitButton>
-    </Form>
+    <>
+      <Form onSubmit={onSubmit}>
+        <Input
+          placeholder="Ask question here"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          name="question"
+        />
+        <SubmitButton type="submit" aria-label="Submit question" disabled={disabled}>
+          <SearchIcon fontSize="small" />
+        </SubmitButton>
+      </Form>
+
+      {tooLong ? (
+        <HelperTextError>Question is too long (max 500 characters).</HelperTextError>
+      ) : tooShort ? (
+        <HelperTextError>Question is too short (min 3 characters).</HelperTextError>
+      ) : value ? (
+        <HelperText>{value.length}/500</HelperText>
+      ) : null}
+    </>
   );
 };
 

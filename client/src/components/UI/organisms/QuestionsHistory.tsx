@@ -21,7 +21,7 @@ const ItemNoBorder = styled(Item)`
 
 const ItemTop = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
 `;
@@ -31,6 +31,9 @@ const QuestionTitle = styled.div`
   color: var(--title);
   font-size: 12.5px;
   line-height: 1.55;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const QuestionTitleMuted = styled(QuestionTitle)`
@@ -73,6 +76,9 @@ const AnswerText = styled.p`
   font-size: 12px;
   line-height: 1.5;
   font-weight: 400;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const QuestionsHistory = ({

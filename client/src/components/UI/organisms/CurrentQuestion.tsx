@@ -26,6 +26,9 @@ const QuestionTitle = styled.div`
   color: var(--title);
   font-size: 12.5px;
   line-height: 1.55;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const AnswerBox = styled.div`
@@ -43,6 +46,9 @@ const AnswerText = styled.p`
   font-size: 12.5px;
   line-height: 1.5;
   font-weight: 400;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const CurrentQuestion = ({ item }: { item: QaItem }) => {
